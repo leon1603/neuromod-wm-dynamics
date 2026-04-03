@@ -1,0 +1,5 @@
+Target,Features,Empirical_AUC,AIC,P_value_AUC
+Thr_0,T1w:T2w + GABAa + NMDA + D1 + D2 + DAT + NET,0.8495,115.3477,0.035
+Thr_0p001,T1w:T2w + GABAa + NMDA + D1 + D2 + DAT + NET,0.8535,109.8289,0.027
+Thr_0p01,T1w:T2w + GABAa + NMDA + D1 + D2 + DAT + NET,0.8495,110.0397,0.047
+Thr_0p1,T1w:T2w + GABAa + NMDA + D1 + D2 + DAT + NET,0.8656,94.7923,0.044
