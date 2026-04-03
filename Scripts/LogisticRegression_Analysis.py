@@ -10,20 +10,20 @@ Public API
 - run_spin_absolute_significance()
 """
 
-import os  # file-system operations (path joining, directory creation)
+import os
 
-import numpy as np              # numerical arrays and NaN handling
-import pandas as pd             # tabular data structures
-import matplotlib.pyplot as plt  # ROC curve figure creation and saving
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
-from sklearn.linear_model import LogisticRegressionCV, LogisticRegression  # cross-validated and fixed-C ridge logistic regression
-from sklearn.metrics import roc_curve, roc_auc_score  # ROC curve coordinates and area-under-curve metric
-from sklearn.preprocessing import StandardScaler  # z-score normalisation of predictor features
-from neuromaps.nulls import alexander_bloch       # generate spatially constrained null distributions via sphere rotation
-from neuromaps.images import annot_to_gifti, relabel_gifti  # convert FreeSurfer annotation to GIfTI and relabel parcel indices
-from netneurotools.datasets import fetch_schaefer2018  # download the Schaefer 2018 brain parcellation
+from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
+from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn.preprocessing import StandardScaler
+from neuromaps.nulls import alexander_bloch
+from neuromaps.images import annot_to_gifti, relabel_gifti
+from netneurotools.datasets import fetch_schaefer2018
 
-from Scripts.utils import plot_grid  # assemble per-target PNG files into a grid figure
+from Scripts.utils import plot_grid
 
 def _aic(y: np.ndarray, probs: np.ndarray, n_features: int) -> float:
     """Compute AIC from binary log-likelihood."""

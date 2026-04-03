@@ -18,38 +18,34 @@ Contents
 - plot_grid()                         : assemble per-target PNG files into a grid figure
 """
 
-import os          # file-system operations (path joining, directory creation, env vars)
-import re          # regular expressions used in filename sanitisation
-import shutil      # high-level file utilities; used here for shutil.which()
+import os
+import re
+import shutil
 
-import numpy as np              # numerical arrays and linear algebra
-import pandas as pd             # tabular data structures
-import matplotlib.pyplot as plt  # figure creation and saving
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
-from neuromaps.images import annot_to_gifti, relabel_gifti  # convert FreeSurfer annotation files to GIfTI format and relabel parcel indices
-from netneurotools.datasets import fetch_schaefer2018        # download the Schaefer 2018 brain parcellation
+from neuromaps.images import annot_to_gifti, relabel_gifti
+from netneurotools.datasets import fetch_schaefer2018
 
-
-# ── Constants ──────────────────────────────────────────────────────────────────
 
 # Maps each receptor name to its neurotransmitter system.
 # Used for within- vs cross-system VIF decomposition, system-level importance
 # summaries, and output directory naming.
 SYSTEM_MAPPING = {
-    '5HT1a': 'Serotonin',    '5HT1b': 'Serotonin',  '5HT2a': 'Serotonin',    # three serotonin receptor subtypes
-    '5HT4':  'Serotonin',    '5HT6':  'Serotonin',   '5HTT':  'Serotonin',    # two more serotonin subtypes plus the serotonin transporter
-    'D1':    'Dopamine',     'D2':    'Dopamine',     'DAT':   'Dopamine',     # dopamine D1/D2 receptors and the dopamine transporter
-    'A4B2':  'Acetylcholine', 'M1':   'Acetylcholine', 'VAChT': 'Acetylcholine', # nicotinic (α4β2), muscarinic (M1), and vesicular acetylcholine transporter
-    'mGluR5': 'Glutamate',   'NMDA':  'Glutamate',    # metabotropic and ionotropic glutamate receptors
-    'GABAa': 'GABA',         'H3':    'Histamine',    'NET':   'Noradrenaline', # inhibitory GABA-A, histamine H3, and the noradrenaline transporter
-    'CB1':   'Cannabinoid',  'MOR':   'Opioid',       # cannabinoid CB1 and mu-opioid receptors
+    '5HT1a': 'Serotonin',    '5HT1b': 'Serotonin',  '5HT2a': 'Serotonin',
+    '5HT4':  'Serotonin',    '5HT6':  'Serotonin',   '5HTT':  'Serotonin',
+    'D1':    'Dopamine',     'D2':    'Dopamine',     'DAT':   'Dopamine',
+    'A4B2':  'Acetylcholine', 'M1':   'Acetylcholine', 'VAChT': 'Acetylcholine',
+    'mGluR5': 'Glutamate',   'NMDA':  'Glutamate',
+    'GABAa': 'GABA',         'H3':    'Histamine',    'NET':   'Noradrenaline',
+    'CB1':   'Cannabinoid',  'MOR':   'Opioid',
 }
 
 ALL_RECEPTOR_COLUMNS = list(SYSTEM_MAPPING.keys())  # ordered list of all 19 receptor/transporter names; used to distinguish "all-receptor" runs from subsets
 T1W_T2W_COLUMN = "T1w:T2w"                          # canonical column name for the myelination proxy derived from T1w/T2w ratio maps
 
-
-# ── Environment ────────────────────────────────────────────────────────────────
 
 def setup_environment(wb_view_path: str, output_directory_path: str) -> str:
     """
@@ -72,8 +68,6 @@ def setup_environment(wb_view_path: str, output_directory_path: str) -> str:
     os.makedirs(output_directory_path, exist_ok=True)  # create the output directory if it does not already exist; no error if it does
     return wb  # return the resolved path (or None) so callers can check availability
 
-
-# ── Parcellation loading ───────────────────────────────────────────────────────
 
 def load_schaefer_parcellation() -> tuple:
     """
@@ -156,8 +150,6 @@ def load_schaefer_parcellation_for_spins():
     return relabel_gifti(annot_to_gifti(schaefer_annot))  # convert to GIfTI and relabel; the GIfTI format is required by alexander_bloch() for spin permutations
 
 
-# ── Vertex mapping ─────────────────────────────────────────────────────────────
-
 def map_roi_values_to_vertices(
     data_df: pd.DataFrame,
     col: str,
@@ -194,8 +186,6 @@ def map_roi_values_to_vertices(
 
     return hemi_data  # return the populated per-vertex arrays for downstream surface plotting
 
-
-# ── Figure utilities ───────────────────────────────────────────────────────────
 
 def save_figure(fig: plt.Figure, name: str, output_dir: str) -> str:
     """
@@ -255,8 +245,6 @@ def plot_grid(targets: list, fig_root: str, save_path: str, filename_fmt: str = 
     fig_grid.savefig(save_path, dpi=300, bbox_inches="tight")  # save the assembled grid at 300 dpi
     plt.close(fig_grid)  # release the figure from memory
 
-
-# ── Statistics ─────────────────────────────────────────────────────────────────
 
 def safe_corr(a: np.ndarray, b: np.ndarray) -> float:
     """
